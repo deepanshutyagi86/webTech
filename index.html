@@ -466,14 +466,57 @@ code {
 }
 
 @media (max-width: 900px) {
+  /* Sidebar: hidden off-screen, slides in on toggle */
   .sidebar { transform: translateX(-100%); transition: transform .3s; }
   .sidebar.mob-open { transform: translateX(0); }
+
+  /* Overlay when sidebar is open */
+  .sidebar.mob-open::after {
+    content: ''; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: -1;
+  }
+
+  /* Main content takes full width */
   .main { margin-left: 0; }
   .progress-bar { left: 0; }
+
+  /* Show hamburger button */
   .mob-toggle { display: flex; align-items: center; justify-content: center; }
-  .hero { padding: 40px 24px 36px; }
-  .content { padding: 30px 24px 60px; }
-  .hero h1 { font-size: 2rem; }
+
+  /* Hero section */
+  .hero { padding: 32px 20px 28px; }
+  .hero h1 { font-size: 1.8rem; letter-spacing: -.5px; }
+  .hero p { font-size: .9rem; }
+  .hero-units { gap: 8px; }
+  .hero-unit-badge { font-size: .72rem; padding: 6px 12px; }
+  .hero-tag { font-size: .65rem; }
+
+  /* Content padding */
+  .content { padding: 20px 16px 80px; }
+
+  /* Unit header */
+  .unit-header { gap: 12px; margin-bottom: 24px; }
+  .unit-header h2 { font-size: 1.3rem; }
+  .unit-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+
+  /* Topic cards */
+  .topic-header { padding: 14px 16px; gap: 10px; }
+  .topic-body { padding: 0 16px 18px; }
+  .topic-title { font-size: .92rem; }
+
+  /* Tables: scroll horizontally on small screens */
+  .comp-table { display: block; overflow-x: auto; white-space: nowrap; }
+  .comp-table th, .comp-table td { padding: 8px 10px; font-size: .78rem; }
+
+  /* Flashcard grid: single column */
+  .flash-grid { grid-template-columns: 1fr; }
+
+  /* Code blocks */
+  pre.code { font-size: .72rem; padding: 12px 14px; }
+
+  /* Revision section */
+  .revision-header { padding: 16px 18px; }
+  .flash-grid { padding: 16px 18px; }
 }
 
 /* ═══════════════════════════════════════
