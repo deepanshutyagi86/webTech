@@ -49,6 +49,10 @@ body {
   overflow-x: hidden;
 }
 
+/* Global: no element should break out of viewport width */
+.topic-body * { max-width: 100%; box-sizing: border-box; }
+.topic-body .comp-table { max-width: none; } /* tables handle via wrapper */
+
 /* ═══════════════════════════════════════
    SCROLLBAR
 ═══════════════════════════════════════ */
@@ -327,7 +331,7 @@ body {
 }
 
 /* Code block */
-.code-wrap { margin: 14px 0; border-radius: var(--radius-sm); overflow: hidden; }
+.code-wrap { margin: 14px 0; border-radius: var(--radius-sm); overflow: hidden; max-width: 100%; }
 .code-label-bar {
   padding: 7px 14px;
   background: var(--card2);
@@ -353,10 +357,10 @@ pre.code {
 .code .n  { color: #bd93f9; }   /* number */
 
 /* Comparison table */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
 .comp-table {
   width: 100%; border-collapse: collapse;
-  margin: 14px 0; font-size: .83rem;
-  border-radius: var(--radius-sm); overflow: hidden;
+  font-size: .83rem; min-width: 420px;
 }
 .comp-table th {
   background: var(--card2); color: var(--text);
@@ -466,57 +470,59 @@ code {
 }
 
 @media (max-width: 900px) {
-  /* Sidebar: hidden off-screen, slides in on toggle */
+  /* Sidebar */
   .sidebar { transform: translateX(-100%); transition: transform .3s; }
-  .sidebar.mob-open { transform: translateX(0); }
+  .sidebar.mob-open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,.5); }
 
-  /* Overlay when sidebar is open */
-  .sidebar.mob-open::after {
-    content: ''; position: fixed; inset: 0;
-    background: rgba(0,0,0,.5); z-index: -1;
-  }
-
-  /* Main content takes full width */
+  /* Main takes full width */
   .main { margin-left: 0; }
   .progress-bar { left: 0; }
-
-  /* Show hamburger button */
   .mob-toggle { display: flex; align-items: center; justify-content: center; }
 
-  /* Hero section */
-  .hero { padding: 32px 20px 28px; }
-  .hero h1 { font-size: 1.8rem; letter-spacing: -.5px; }
-  .hero p { font-size: .9rem; }
-  .hero-units { gap: 8px; }
-  .hero-unit-badge { font-size: .72rem; padding: 6px 12px; }
-  .hero-tag { font-size: .65rem; }
+  /* Hero */
+  .hero { padding: 28px 16px 24px; }
+  .hero h1 { font-size: 1.65rem; letter-spacing: -.5px; }
+  .hero p { font-size: .88rem; max-width: 100%; }
+  .hero-content { max-width: 100%; }
+  .hero-units { gap: 8px; margin-top: 20px; }
+  .hero-unit-badge { font-size: .7rem; padding: 6px 11px; }
 
-  /* Content padding */
-  .content { padding: 20px 16px 80px; }
+  /* Content area — this was the main culprit (was 40px 60px) */
+  .content { padding: 16px 14px 80px; max-width: 100%; }
 
   /* Unit header */
-  .unit-header { gap: 12px; margin-bottom: 24px; }
-  .unit-header h2 { font-size: 1.3rem; }
-  .unit-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+  .unit-header { flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 14px; }
+  .unit-header h2 { font-size: 1.2rem; }
+  .unit-header p  { font-size: .8rem; }
 
   /* Topic cards */
-  .topic-header { padding: 14px 16px; gap: 10px; }
-  .topic-body { padding: 0 16px 18px; }
-  .topic-title { font-size: .92rem; }
+  .topic-header { padding: 13px 14px; gap: 10px; }
+  .topic-body   { padding: 0 14px 16px; }
+  .topic-title  { font-size: .9rem; }
+  .topic-icon   { width: 32px; height: 32px; font-size: .9rem; }
 
-  /* Tables: scroll horizontally on small screens */
-  .comp-table { display: block; overflow-x: auto; white-space: nowrap; }
-  .comp-table th, .comp-table td { padding: 8px 10px; font-size: .78rem; }
+  /* Explanation & memory boxes */
+  .explain-box, .memory-box { padding: 12px 14px; }
+  .explain-box p, .memory-box p { font-size: .83rem; }
 
-  /* Flashcard grid: single column */
-  .flash-grid { grid-template-columns: 1fr; }
+  /* Tables — wrap in scrollable container */
+  .comp-table { min-width: 420px; }
+  .comp-table th, .comp-table td { padding: 8px 10px; font-size: .76rem; white-space: normal; }
 
-  /* Code blocks */
-  pre.code { font-size: .72rem; padding: 12px 14px; }
+  /* Code */
+  pre.code { font-size: .7rem; padding: 12px; }
+  .code-label-bar { font-size: .63rem; padding: 6px 12px; }
 
-  /* Revision section */
+  /* Key points */
+  .kp-list li { font-size: .83rem; }
+
+  /* Flashcards */
+  .flash-grid { grid-template-columns: 1fr; padding: 14px 16px; gap: 8px; }
   .revision-header { padding: 16px 18px; }
-  .flash-grid { padding: 16px 18px; }
+  .revision-header h3 { font-size: .95rem; }
+
+  /* Box model visual diagram */
+  .unit-section div[style*="text-align:center"] { overflow-x: auto; }
 }
 
 /* ═══════════════════════════════════════
@@ -1431,9 +1437,9 @@ function loadUnit(unitId) {
   loadedUnits[unitId] = true;
   const content = document.querySelector('.content');
 
-  if (unitId === 'u2') injectUnit2(content);
-  if (unitId === 'u3') injectUnit3(content);
-  if (unitId === 'u4') injectUnit4(content);
+  if (unitId === 'u2') { injectUnit2(content); wrapTables(); }
+  if (unitId === 'u3') { injectUnit3(content); wrapTables(); }
+  if (unitId === 'u4') { injectUnit4(content); wrapTables(); }
 }
 
 // ═══════════════════════════════════════
@@ -2561,8 +2567,19 @@ Route::<span class="fn">get</span>(<span class="s">'/users/{id}/{page}'</span>, 
 }
 
 // ═══════════════════════════════════════
-//  NAV DATA-UNIT ATTRIBUTES
+//  WRAP TABLES FOR MOBILE SCROLL
 // ═══════════════════════════════════════
+function wrapTables() {
+  document.querySelectorAll('.comp-table').forEach(t => {
+    if (t.parentElement.classList.contains('table-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+}
+// Run on load and after each unit injection
+document.addEventListener('DOMContentLoaded', wrapTables);
 document.querySelectorAll('.nav-unit-btn').forEach((btn, i) => {
   const units = ['u1','u2','u3','u4'];
   btn.setAttribute('data-unit', units[i]);
