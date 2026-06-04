@@ -510,7 +510,7 @@ code {
   .comp-table th, .comp-table td { padding: 8px 10px; font-size: .76rem; white-space: normal; }
 
   /* Code */
-  pre.code { font-size: .7rem; padding: 12px; }
+  pre.code { font-size: .7rem; padding: 12px; white-space: pre-wrap; word-break: break-all; }
   .code-label-bar { font-size: .63rem; padding: 6px 12px; }
 
   /* Key points */
@@ -2578,8 +2578,7 @@ function wrapTables() {
     wrap.appendChild(t);
   });
 }
-// Run on load and after each unit injection
-document.addEventListener('DOMContentLoaded', wrapTables);
+wrapTables(); // run immediately — Unit 1 is already in DOM
 document.querySelectorAll('.nav-unit-btn').forEach((btn, i) => {
   const units = ['u1','u2','u3','u4'];
   btn.setAttribute('data-unit', units[i]);
