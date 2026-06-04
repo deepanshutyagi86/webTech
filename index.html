@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Technologies — Smart Study Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0d0f1a;
+    --surface: #141728;
+    --surface2: #1c2035;
+    --border: #2a2f4a;
+    --accent1: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #00d4aa;
+    --accent4: #ffb347;
+    --accent5: #4fc3f7;
+    --text: #e8eaf6;
+    --text-dim: #8892b0;
+    --code-bg: #0a0c16;
+    --green: #56d084;
+    --red: #ff6b6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ---- HEADER ---- */
+  .hero {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1040 50%, #0d1f2d 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(0,212,170,0.1) 0%, transparent 60%);
+  }
+  .hero h1 {
+    font-size: 2.6rem; font-weight: 800;
+    background: linear-gradient(135deg, #6c63ff, #ff6b9d, #00d4aa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative; z-index: 1;
+  }
+  .hero p {
+    margin-top: 12px; color: var(--text-dim); font-size: 1.05rem;
+    position: relative; z-index: 1;
+  }
+  .badges { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+  .badge {
+    padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .badge-u1 { background: rgba(108,99,255,0.2); color: #a29bff; border: 1px solid rgba(108,99,255,0.4); }
+  .badge-u2 { background: rgba(255,107,157,0.2); color: #ff9ec0; border: 1px solid rgba(255,107,157,0.4); }
+  .badge-u3 { background: rgba(0,212,170,0.2); color: #5fffdc; border: 1px solid rgba(0,212,170,0.4); }
+  .badge-u4 { background: rgba(255,179,71,0.2); color: #ffcc7a; border: 1px solid rgba(255,179,71,0.4); }
+
+  /* ---- NAV ---- */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,26,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex; gap: 4px; overflow-x: auto;
+  }
+  .nav-btn {
+    padding: 14px 18px; border: none; background: none;
+    color: var(--text-dim); font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap; border-bottom: 3px solid transparent;
+    transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+  /* ---- MAIN LAYOUT ---- */
+  .container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 80px; }
+
+  .unit { display: none; }
+  .unit.active { display: block; }
+
+  /* ---- SECTION ---- */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 18px 24px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; user-select: none;
+    background: var(--surface);
+    transition: background 0.2s;
+  }
+  .section-header:hover { background: var(--surface2); }
+
+  .section-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 1.05rem; font-weight: 800; flex: 1;
+  }
+  .chevron {
+    color: var(--text-dim); font-size: 1rem;
+    transition: transform 0.25s;
+  }
+  .section-card.open .chevron { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 0 24px 24px;
+  }
+  .section-card.open .section-body { display: block; }
+
+  /* ---- CONCEPT BOX ---- */
+  .concept {
+    margin-bottom: 20px;
+  }
+  .concept h3 {
+    font-size: 0.95rem; font-weight: 800; color: var(--accent5);
+    margin-bottom: 10px; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .concept h3::before { content: '→'; color: var(--accent1); }
+  .concept p {
+    font-size: 0.92rem; color: #c5cae9; line-height: 1.75;
+  }
+
+  /* ---- BABY EXPLAIN BOX ---- */
+  .baby-box {
+    background: rgba(0,212,170,0.07);
+    border: 1px solid rgba(0,212,170,0.25);
+    border-radius: 12px; padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .baby-box .baby-label {
+    font-size: 0.72rem; font-weight: 800; color: var(--accent3);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .baby-box p {
+    font-size: 0.88rem; color: #b2dfdb; line-height: 1.7;
+  }
+
+  /* ---- KEY POINTS ---- */
+  .keypoints {
+    background: rgba(108,99,255,0.07);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 12px; padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .keypoints .kp-label {
+    font-size: 0.72rem; font-weight: 800; color: var(--accent1);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .keypoints ul { list-style: none; }
+  .keypoints li {
+    font-size: 0.88rem; color: #c5cae9; padding: 4px 0;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .keypoints li::before { content: '✦'; color: var(--accent1); font-size: 0.7rem; margin-top: 4px; flex-shrink: 0; }
+
+  /* ---- CODE BLOCK ---- */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; margin: 14px 0;
+  }
+  .code-label {
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.04);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.5px;
+  }
+  pre {
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; line-height: 1.65;
+    color: #a8d8ea; overflow-x: auto;
+    white-space: pre-wrap; word-break: break-all;
+  }
+
+  /* Syntax coloring */
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .tag { color: #f07178; }
+  .attr { color: #ffcb6b; }
+  .val { color: #c3e88d; }
+  .fn { color: #82aaff; }
+  .num { color: #f78c6c; }
+
+  /* ---- COMPARISON TABLE ---- */
+  .comp-table {
+    width: 100%; border-collapse: collapse; margin: 14px 0;
+    font-size: 0.84rem;
+  }
+  .comp-table th {
+    background: rgba(108,99,255,0.2); color: #a29bff;
+    padding: 10px 14px; text-align: left; font-weight: 800;
+    border-bottom: 2px solid rgba(108,99,255,0.3);
+  }
+  .comp-table td {
+    padding: 9px 14px; border-bottom: 1px solid var(--border);
+    color: #c5cae9; vertical-align: top;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* ---- MNEMONIC ---- */
+  .mnemonic {
+    background: rgba(255,107,157,0.08);
+    border: 1px solid rgba(255,107,157,0.25);
+    border-radius: 12px; padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .mnemonic .mn-label {
+    font-size: 0.72rem; font-weight: 800; color: var(--accent2);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .mnemonic p { font-size: 0.88rem; color: #ffd1dc; }
+
+  /* ---- FLOW STEPS ---- */
+  .flow-steps { margin: 14px 0; }
+  .flow-step {
+    display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent1); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content { font-size: 0.9rem; color: #c5cae9; flex: 1; }
+  .step-content strong { color: var(--text); }
+
+  /* ---- QUIZ ---- */
+  .quiz-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .quiz-section h2 {
+    font-size: 1.2rem; font-weight: 800; color: var(--accent4);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .quiz-q {
+    background: var(--surface2);
+    border-radius: 12px; padding: 18px;
+    margin-bottom: 16px;
+  }
+  .quiz-q .q-text {
+    font-size: 0.92rem; font-weight: 700; color: var(--text);
+    margin-bottom: 12px;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer;
+    font-size: 0.86rem; color: var(--text-dim);
+    transition: all 0.15s; text-align: left;
+    font-family: 'Nunito', sans-serif;
+  }
+  .quiz-opt:hover { background: rgba(108,99,255,0.1); border-color: var(--accent1); color: var(--text); }
+  .quiz-opt.correct { background: rgba(86,208,132,0.15); border-color: var(--green); color: var(--green); }
+  .quiz-opt.wrong { background: rgba(255,107,107,0.15); border-color: var(--red); color: var(--red); }
+  .q-feedback { margin-top: 10px; font-size: 0.83rem; display: none; padding: 8px 12px; border-radius: 8px; }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: rgba(86,208,132,0.1); color: var(--green); }
+  .q-feedback.bad { background: rgba(255,107,107,0.1); color: var(--red); }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    height: 1px; background: var(--border); margin: 16px 0;
+  }
+
+  /* ---- HIGHLIGHT CHIP ---- */
+  .chip {
+    display: inline-block;
+    padding: 2px 10px; border-radius: 12px;
+    font-size: 0.78rem; font-weight: 700;
+    margin: 2px 3px;
+  }
+  .chip-purple { background: rgba(108,99,255,0.2); color: #a29bff; }
+  .chip-pink { background: rgba(255,107,157,0.2); color: #ff9ec0; }
+  .chip-green { background: rgba(86,208,132,0.2); color: #56d084; }
+  .chip-orange { background: rgba(255,179,71,0.2); color: #ffcc7a; }
+  .chip-blue { background: rgba(79,195,247,0.2); color: #4fc3f7; }
+
+  /* ---- SCROLLBAR ---- */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🌐 Web Technologies — Super Study Guide</h1>
+  <p>Your all-in-one cheat sheet. Fast, clear, and baby-friendly. Open each topic, check the key points, then quiz yourself.</p>
+  <div class="badges">
+    <span class="badge badge-u1">Unit 1 · HTML / CSS / XML</span>
+    <span class="badge badge-u2">Unit 2 · JavaScript / JSP</span>
+    <span class="badge badge-u3">Unit 3 · PHP Basics</span>
+    <span class="badge badge-u4">Unit 4 · PHP + MySQL</span>
+  </div>
+</div>
+
+<nav class="sticky-nav">
+  <button class="nav-btn active" onclick="showUnit('u1',this)">Unit 1 · HTML/CSS/XML</button>
+  <button class="nav-btn" onclick="showUnit('u2',this)">Unit 2 · JS/JSP</button>
+  <button class="nav-btn" onclick="showUnit('u3',this)">Unit 3 · PHP</button>
+  <button class="nav-btn" onclick="showUnit('u4',this)">Unit 4 · PHP+MySQL</button>
+  <button class="nav-btn" onclick="showUnit('quiz',this)">🎯 Quick Quiz</button>
+</nav>
+
+<div class="container">
+
+<!-- ========== UNIT 1 ========== -->
+<div id="u1" class="unit active">
+
+  <!-- HTML BASICS -->
+  <div class="section-card open">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(108,99,255,0.2)">🏗️</div>
+      <div class="section-title">HTML — The Skeleton of Every Web Page</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 Think of it like this</div>
+        <p>HTML is like the <strong>bones</strong> of a human body. Just like bones give your body its shape, HTML gives a web page its structure — headings, paragraphs, images, links. Without it, there's nothing to see!</p>
+      </div>
+
+      <div class="concept">
+        <h3>Basic Document Structure</h3>
+        <div class="code-block">
+          <div class="code-label">html · basic template</div>
+          <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+  <span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;title&gt;</span>My Page<span class="tag">&lt;/title&gt;</span>    <span class="cm">&lt;!-- shown in tab --&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+  <span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Hello World!<span class="tag">&lt;/h1&gt;</span>  <span class="cm">&lt;!-- biggest heading --&gt;</span>
+    <span class="tag">&lt;p&gt;</span>This is a paragraph.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="keypoints">
+        <div class="kp-label">🔑 Key Points</div>
+        <ul>
+          <li><code>&lt;!DOCTYPE html&gt;</code> — Tells browser this is HTML5</li>
+          <li><code>&lt;html&gt;</code> — Root tag; everything goes inside it</li>
+          <li><code>&lt;head&gt;</code> — Invisible info (title, CSS links, meta tags)</li>
+          <li><code>&lt;body&gt;</code> — The visible content users see</li>
+          <li>Tags come in pairs: <code>&lt;tag&gt;</code> opens, <code>&lt;/tag&gt;</code> closes. Some are self-closing: <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code></li>
+          <li>HTML is <strong>NOT case-sensitive</strong>, but always use lowercase — it's best practice</li>
+          <li>Attributes give extra info: <code>&lt;img src="dog.jpg" alt="A dog"&gt;</code></li>
+        </ul>
+      </div>
+
+      <div class="concept">
+        <h3>Text Formatting Tags</h3>
+        <div class="code-block">
+          <div class="code-label">html · text tags</div>
+          <pre><span class="tag">&lt;h1&gt;</span>Biggest Heading<span class="tag">&lt;/h1&gt;</span>    <span class="cm">&lt;!-- h1 to h6 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Paragraph<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;strong&gt;</span>Bold text<span class="tag">&lt;/strong&gt;</span>        <span class="cm">&lt;!-- semantic bold --&gt;</span>
+<span class="tag">&lt;em&gt;</span>Italic text<span class="tag">&lt;/em&gt;</span>            <span class="cm">&lt;!-- semantic italic --&gt;</span>
+<span class="tag">&lt;br&gt;</span>                             <span class="cm">&lt;!-- line break (no closing) --&gt;</span>
+<span class="tag">&lt;hr&gt;</span>                             <span class="cm">&lt;!-- horizontal rule/line --&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Block vs Inline Elements</h3>
+        <table class="comp-table">
+          <tr><th>Block Elements</th><th>Inline Elements</th></tr>
+          <tr><td>Start on a new line, take full width</td><td>Flow within text, only as wide as content</td></tr>
+          <tr><td><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1-h6&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code></td><td><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;img&gt;</code></td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>Lists (ol, ul, dl)</h3>
+        <div class="code-block">
+          <div class="code-label">html · lists</div>
+          <pre><span class="cm">&lt;!-- Ordered (numbered) --&gt;</span>
+<span class="tag">&lt;ol&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Step 1<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Step 2<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="cm">&lt;!-- Unordered (bullets) --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Apple<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- Definition List --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>HTML<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>HyperText Markup Language<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Tables</h3>
+        <div class="code-block">
+          <div class="code-label">html · table structure</div>
+          <pre><span class="tag">&lt;table border="1"&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>                       <span class="cm">&lt;!-- table row --&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Name<span class="tag">&lt;/th&gt;</span>            <span class="cm">&lt;!-- header cell (bold) --&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Age<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Alice<span class="tag">&lt;/td&gt;</span>           <span class="cm">&lt;!-- data cell --&gt;</span>
+    <span class="tag">&lt;td&gt;</span>21<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span></pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">Table Attributes</div>
+          <ul>
+            <li><code>colspan</code> — Cell spans multiple columns</li>
+            <li><code>rowspan</code> — Cell spans multiple rows</li>
+            <li><code>border</code>, <code>cellpadding</code>, <code>cellspacing</code> — Visual styling (prefer CSS nowadays)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Forms — Collecting User Input</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Simple idea</div>
+          <p>A form is like a paper form at a doctor's office — you fill in your name, tick some boxes, and submit. HTML forms do the same thing digitally and send data to a server.</p>
+        </div>
+        <div class="code-block">
+          <div class="code-label">html · form example</div>
+          <pre><span class="tag">&lt;form action="/submit" method="post"&gt;</span>
+  <span class="tag">&lt;input type="text" name="username" placeholder="Enter name" required&gt;</span>
+  <span class="tag">&lt;input type="password" name="pass" required&gt;</span>
+  <span class="tag">&lt;input type="checkbox" name="agree"&gt;</span> I agree
+  <span class="tag">&lt;input type="submit" value="Submit"&gt;</span>
+<span class="tag">&lt;/form&gt;</span></pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">Form Attributes to Remember</div>
+          <ul>
+            <li><code>action</code> — Where to send data (URL)</li>
+            <li><code>method</code> — <code>GET</code> (visible in URL) or <code>POST</code> (hidden, more secure)</li>
+            <li><code>required</code> — Browser won't submit if empty</li>
+            <li><code>placeholder</code> — Hint text inside the field</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Links &amp; Images</h3>
+        <div class="code-block">
+          <div class="code-label">html · links and images</div>
+          <pre><span class="cm">&lt;!-- Link --&gt;</span>
+<span class="tag">&lt;a href="https://google.com" target="_blank"&gt;</span>Visit Google<span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Image --&gt;</span>
+<span class="tag">&lt;img src="photo.jpg" alt="A photo" width="300" height="200"&gt;</span>
+
+<span class="cm">&lt;!-- Figure with caption (semantic) --&gt;</span>
+<span class="tag">&lt;figure&gt;</span>
+  <span class="tag">&lt;img src="photo.jpg" alt="Sunset"&gt;</span>
+  <span class="tag">&lt;figcaption&gt;</span>Beautiful Sunset<span class="tag">&lt;/figcaption&gt;</span>
+<span class="tag">&lt;/figure&gt;</span></pre>
+        </div>
+        <div class="mnemonic">
+          <div class="mn-label">💡 &lt;figure&gt; vs &lt;img&gt;</div>
+          <p><code>&lt;img&gt;</code> = just the image. <code>&lt;figure&gt;</code> = image + context/caption. Use <code>&lt;figure&gt;</code> when you want to add a description below the image. Think of <code>&lt;figure&gt;</code> as a picture frame with a label!</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Layouts: Semantic HTML + Flexbox/Grid</h3>
+        <div class="code-block">
+          <div class="code-label">html · semantic layout structure</div>
+          <pre><span class="tag">&lt;header&gt;</span>Logo &amp; nav<span class="tag">&lt;/header&gt;</span>
+<span class="tag">&lt;nav&gt;</span>Navigation links<span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;main&gt;</span>
+  <span class="tag">&lt;section&gt;</span>Topic A<span class="tag">&lt;/section&gt;</span>
+  <span class="tag">&lt;article&gt;</span>A blog post<span class="tag">&lt;/article&gt;</span>
+<span class="tag">&lt;/main&gt;</span>
+<span class="tag">&lt;footer&gt;</span>© 2024<span class="tag">&lt;/footer&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS -->
+  <div class="section-card">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(255,107,157,0.2)">🎨</div>
+      <div class="section-title">CSS — Making Things Look Beautiful</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 Think of it like this</div>
+        <p>If HTML is the skeleton, CSS is the skin, clothes, and makeup! It controls colors, fonts, spacing, layout — everything visual. Without CSS a website looks like a plain text document.</p>
+      </div>
+
+      <div class="concept">
+        <h3>CSS Syntax</h3>
+        <div class="code-block">
+          <div class="code-label">css · basic syntax</div>
+          <pre><span class="cm">/* selector { property: value; } */</span>
+
+<span class="fn">p</span> {
+  <span class="attr">color</span>: <span class="val">blue</span>;
+  <span class="attr">font-size</span>: <span class="val">16px</span>;
+}
+
+<span class="cm">/* Class selector */</span>
+<span class="fn">.highlight</span> { <span class="attr">background-color</span>: <span class="val">yellow</span>; }
+
+<span class="cm">/* ID selector */</span>
+<span class="fn">#header</span> { <span class="attr">font-size</span>: <span class="val">24px</span>; }
+
+<span class="cm">/* Multiple selectors */</span>
+<span class="fn">h1, h2, h3</span> { <span class="attr">color</span>: <span class="val">red</span>; }</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>3 Ways to Add CSS</h3>
+        <table class="comp-table">
+          <tr><th>Method</th><th>Where</th><th>Use When</th></tr>
+          <tr><td><strong>Inline</strong></td><td>Inside HTML tag: <code>style="..."</code></td><td>Quick one-off tweaks</td></tr>
+          <tr><td><strong>Internal</strong></td><td><code>&lt;style&gt;</code> in <code>&lt;head&gt;</code></td><td>Single-page styles</td></tr>
+          <tr><td><strong>External</strong></td><td>Separate <code>.css</code> file, linked with <code>&lt;link&gt;</code></td><td>Best practice — reusable across pages</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>The Box Model 📦</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Analogy</div>
+          <p>Think of a box inside a box. The innermost is the <strong>content</strong> (text/image). Around it is <strong>padding</strong> (cushioning). Then a <strong>border</strong> (wall). Outside the border is <strong>margin</strong> (space between this box and others).</p>
+        </div>
+        <div class="code-block">
+          <div class="code-label">css · box model</div>
+          <pre><span class="fn">.box</span> {
+  <span class="attr">width</span>: <span class="val">200px</span>;        <span class="cm">/* content width */</span>
+  <span class="attr">padding</span>: <span class="val">20px</span>;      <span class="cm">/* space INSIDE border */</span>
+  <span class="attr">border</span>: <span class="val">2px solid black</span>;
+  <span class="attr">margin</span>: <span class="val">10px</span>;       <span class="cm">/* space OUTSIDE border */</span>
+}</pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">Remember: PCBM order (Content → Padding → Border → Margin)</div>
+          <ul>
+            <li><strong>Content</strong> — The actual text or image</li>
+            <li><strong>Padding</strong> — Space between content and border (inside)</li>
+            <li><strong>Border</strong> — The visible line/wall around the element</li>
+            <li><strong>Margin</strong> — Space outside the border (between elements)</li>
+          </ul>
+        </div>
+        <div class="mnemonic">
+          <div class="mn-label">🧠 Memory Trick</div>
+          <p><strong>P</strong>lease <strong>B</strong>ring <strong>M</strong>ore Chocolate = Padding, Border, Margin (from inside out!)</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>CSS Positioning</h3>
+        <table class="comp-table">
+          <tr><th>Value</th><th>What it Does</th></tr>
+          <tr><td><code>static</code></td><td>Default — flows normally with page</td></tr>
+          <tr><td><code>relative</code></td><td>Moves relative to its normal position; other elements not affected</td></tr>
+          <tr><td><code>absolute</code></td><td>Positioned relative to nearest positioned ancestor; removed from flow</td></tr>
+          <tr><td><code>fixed</code></td><td>Stays fixed on screen even when you scroll (like a sticky navbar)</td></tr>
+          <tr><td><code>float</code></td><td>Floats left/right; text wraps around it</td></tr>
+          <tr><td><code>z-index</code></td><td>Controls stacking — higher z-index = on top</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>Common CSS Properties Quick Reference</h3>
+        <div class="code-block">
+          <div class="code-label">css · common properties</div>
+          <pre><span class="cm">/* COLORS */</span>
+<span class="attr">color</span>: <span class="val">red</span>;                   <span class="cm">/* text color */</span>
+<span class="attr">background-color</span>: <span class="val">#f0f0f0</span>;   <span class="cm">/* bg color */</span>
+<span class="attr">opacity</span>: <span class="val">0.8</span>;                <span class="cm">/* 0=invisible, 1=full */</span>
+
+<span class="cm">/* TEXT */</span>
+<span class="attr">font-family</span>: <span class="val">Arial, sans-serif</span>;
+<span class="attr">font-size</span>: <span class="val">16px</span>;
+<span class="attr">font-weight</span>: <span class="val">bold</span>;           <span class="cm">/* or 100-900 */</span>
+<span class="attr">text-align</span>: <span class="val">center</span>;         <span class="cm">/* left/right/center/justify */</span>
+<span class="attr">text-decoration</span>: <span class="val">underline</span>;
+<span class="attr">text-transform</span>: <span class="val">uppercase</span>;
+
+<span class="cm">/* BACKGROUND IMAGE */</span>
+<span class="attr">background-image</span>: <span class="fn">url</span>(<span class="val">'bg.jpg'</span>);
+<span class="attr">background-repeat</span>: <span class="val">no-repeat</span>;  <span class="cm">/* or repeat-x, repeat-y */</span>
+<span class="attr">background-size</span>: <span class="val">cover</span>;
+
+<span class="cm">/* BORDERS */</span>
+<span class="attr">border</span>: <span class="val">1px solid #ccc</span>;
+<span class="attr">border-radius</span>: <span class="val">10px</span>;          <span class="cm">/* rounded corners */</span>
+
+<span class="cm">/* SHADOWS */</span>
+<span class="attr">box-shadow</span>: <span class="val">3px 3px 5px rgba(0,0,0,0.5)</span>;
+<span class="attr">text-shadow</span>: <span class="val">1px 1px 2px rgba(0,0,0,0.5)</span>;</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XML -->
+  <div class="section-card">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(0,212,170,0.2)">📄</div>
+      <div class="section-title">XML, DTD, XSD, DOM, SAX, XHTML</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="concept">
+        <h3>XML — eXtensible Markup Language</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Simple idea</div>
+          <p>XML is like HTML but you make up your own tags. It's used to <strong>store and transport data</strong> between systems — like a universal language for computers to talk to each other.</p>
+        </div>
+        <div class="code-block">
+          <div class="code-label">xml · employee example</div>
+          <pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;employees&gt;</span>
+  <span class="tag">&lt;employee id="1"&gt;</span>
+    <span class="tag">&lt;name&gt;</span>John Doe<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>Engineering<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>50000<span class="tag">&lt;/salary&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+<span class="tag">&lt;/employees&gt;</span></pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">XML Rules (must follow for "Well-Formed")</div>
+          <ul>
+            <li>Must have exactly ONE root element</li>
+            <li>All tags must be properly nested (closed in correct order)</li>
+            <li>Attribute values must be in quotes</li>
+            <li>Tags are case-sensitive!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>DTD vs XML Schema (XSD)</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Analogy</div>
+          <p>Both DTD and XSD are like a <strong>rulebook</strong> for an XML document. They say "this document must have these tags, in this order". The difference: XSD is the newer, more powerful rulebook!</p>
+        </div>
+        <table class="comp-table">
+          <tr><th>Feature</th><th>DTD</th><th>XSD (XML Schema)</th></tr>
+          <tr><td>Syntax</td><td>Custom, simpler</td><td>Written in XML itself</td></tr>
+          <tr><td>Data Types</td><td>Limited</td><td>Rich (string, integer, decimal...)</td></tr>
+          <tr><td>Namespaces</td><td>❌ No</td><td>✅ Yes</td></tr>
+          <tr><td>Inheritance</td><td>❌ No</td><td>✅ Yes</td></tr>
+          <tr><td>Used in</td><td>Older systems, XHTML</td><td>Modern XML, SOAP</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>DOM vs SAX Parsers</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Analogy</div>
+          <p><strong>DOM parser</strong> = Read the entire book, then answer questions. <strong>SAX parser</strong> = Read the book line by line and react as you go — great for huge books (files) since you don't need to load everything at once.</p>
+        </div>
+        <table class="comp-table">
+          <tr><th></th><th>DOM Parser</th><th>SAX Parser</th></tr>
+          <tr><td><strong>Loads whole file?</strong></td><td>✅ Yes (into memory)</td><td>❌ No (event-based)</td></tr>
+          <tr><td><strong>Memory use</strong></td><td>High</td><td>Low</td></tr>
+          <tr><td><strong>Random access?</strong></td><td>✅ Yes</td><td>❌ Sequential only</td></tr>
+          <tr><td><strong>Best for</strong></td><td>Small-medium files; need to navigate</td><td>Large files; streaming</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>XHTML in a Nutshell</h3>
+        <div class="keypoints">
+          <div class="kp-label">XHTML = HTML + XML strictness</div>
+          <ul>
+            <li>All tags must be <strong>lowercase</strong></li>
+            <li>All tags must be <strong>closed</strong> (even <code>&lt;br /&gt;</code>)</li>
+            <li>All attribute values in <strong>quotes</strong></li>
+            <li>Must have a single <strong>root element</strong></li>
+            <li>Needs a <code>DOCTYPE</code> declaration</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Meta Tags &amp; Character Entities</h3>
+        <div class="code-block">
+          <div class="code-label">html · meta tags (go inside &lt;head&gt;)</div>
+          <pre><span class="tag">&lt;meta charset="UTF-8"&gt;</span>              <span class="cm">&lt;!-- character encoding --&gt;</span>
+<span class="tag">&lt;meta name="description" content="My page"&gt;</span>
+<span class="tag">&lt;meta name="keywords" content="web, html"&gt;</span>
+<span class="tag">&lt;meta name="author" content="Your Name"&gt;</span>
+
+<span class="cm">&lt;!-- Character Entities --&gt;</span>
+&amp;lt;  = <span class="str">&lt;</span>  (less than)
+&amp;gt;  = <span class="str">&gt;</span>  (greater than)
+&amp;amp; = <span class="str">&amp;</span>  (ampersand)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- end unit 1 -->
+
+<!-- ========== UNIT 2 ========== -->
+<div id="u2" class="unit">
+
+  <div class="section-card open">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(255,179,71,0.2)">⚡</div>
+      <div class="section-title">JavaScript — Making Pages Interactive</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 Simple idea</div>
+        <p>If HTML = bones, CSS = skin/clothes, then <strong>JavaScript = muscles</strong>. JS makes things move and respond. Click a button → something happens. That's JS!</p>
+      </div>
+
+      <div class="concept">
+        <h3>var vs let vs const</h3>
+        <table class="comp-table">
+          <tr><th></th><th>var</th><th>let</th><th>const</th></tr>
+          <tr><td><strong>Scope</strong></td><td>Function / Global</td><td>Block</td><td>Block</td></tr>
+          <tr><td><strong>Re-declare?</strong></td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td><strong>Reassign?</strong></td><td>✅</td><td>✅</td><td>❌</td></tr>
+          <tr><td><strong>Use when</strong></td><td>Old code / legacy</td><td>Value will change</td><td>Value won't change</td></tr>
+        </table>
+        <div class="mnemonic">
+          <div class="mn-label">💡 Best Practice</div>
+          <p>Use <code>const</code> by default. Switch to <code>let</code> only if you need to reassign. Avoid <code>var</code> in modern code.</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Data Types (Primitives)</h3>
+        <div class="code-block">
+          <div class="code-label">javascript · primitives</div>
+          <pre><span class="kw">let</span> name = <span class="str">"Alice"</span>;       <span class="cm">// String</span>
+<span class="kw">let</span> age = <span class="num">25</span>;            <span class="cm">// Number</span>
+<span class="kw">let</span> isStudent = <span class="kw">true</span>;   <span class="cm">// Boolean</span>
+<span class="kw">let</span> car = <span class="kw">null</span>;          <span class="cm">// Null (intentionally empty)</span>
+<span class="kw">let</span> city;                <span class="cm">// Undefined (declared, no value)</span>
+<span class="kw">const</span> id = <span class="fn">Symbol</span>(<span class="str">'id'</span>); <span class="cm">// Symbol (unique)</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Control Flow</h3>
+        <div class="code-block">
+          <div class="code-label">javascript · if / switch / loops</div>
+          <pre><span class="cm">// If-else</span>
+<span class="kw">if</span> (age >= <span class="num">18</span>) { <span class="fn">console.log</span>(<span class="str">"Adult"</span>); }
+<span class="kw">else</span> { <span class="fn">console.log</span>(<span class="str">"Minor"</span>); }
+
+<span class="cm">// Switch</span>
+<span class="kw">switch</span> (day) {
+  <span class="kw">case</span> <span class="str">"Mon"</span>: <span class="fn">console.log</span>(<span class="str">"Monday!"</span>); <span class="kw">break</span>;
+  <span class="kw">default</span>: <span class="fn">console.log</span>(<span class="str">"Other day"</span>);
+}
+
+<span class="cm">// For loop</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) { <span class="fn">console.log</span>(i); }
+
+<span class="cm">// For...of (arrays)</span>
+<span class="kw">for</span> (<span class="kw">const</span> fruit <span class="kw">of</span> fruits) { <span class="fn">console.log</span>(fruit); }
+
+<span class="cm">// While</span>
+<span class="kw">while</span> (count < <span class="num">10</span>) { count++; }</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Functions (7 Types!)</h3>
+        <div class="code-block">
+          <div class="code-label">javascript · function types</div>
+          <pre><span class="cm">// 1. Declaration</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+
+<span class="cm">// 2. Expression</span>
+<span class="kw">const</span> sub = <span class="kw">function</span>(a, b) { <span class="kw">return</span> a - b; };
+
+<span class="cm">// 3. Arrow Function (ES6) — shortest!</span>
+<span class="kw">const</span> mul = (a, b) => a * b;
+
+<span class="cm">// 4. IIFE — runs immediately!</span>
+(<span class="kw">function</span>() { <span class="fn">console.log</span>(<span class="str">"I run right now!"</span>); })();
+
+<span class="cm">// 5. Async function</span>
+<span class="kw">async function</span> <span class="fn">getData</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api'</span>);
+}
+
+<span class="cm">// 6. Generator</span>
+<span class="kw">function*</span> <span class="fn">gen</span>() { <span class="kw">yield</span> <span class="num">1</span>; <span class="kw">yield</span> <span class="num">2</span>; }</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>call(), apply(), bind()</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Analogy</div>
+          <p>All three let you borrow a method from another object and use it with <code>this</code> pointing to your object. Like borrowing a friend's pen but writing your own name.</p>
+        </div>
+        <table class="comp-table">
+          <tr><th>Method</th><th>Args passed as</th><th>Returns</th></tr>
+          <tr><td><code>call(obj, a, b)</code></td><td>Individual args</td><td>Result immediately</td></tr>
+          <tr><td><code>apply(obj, [a, b])</code></td><td>Array</td><td>Result immediately</td></tr>
+          <tr><td><code>bind(obj, a)</code></td><td>Individual args</td><td>A NEW function (doesn't run yet)</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>DOM Manipulation</h3>
+        <div class="code-block">
+          <div class="code-label">javascript · dom methods</div>
+          <pre><span class="cm">// Select elements</span>
+<span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">"myId"</span>);
+<span class="kw">const</span> els = document.<span class="fn">querySelectorAll</span>(<span class="str">".myClass"</span>);
+
+<span class="cm">// Change content</span>
+el.innerHTML = <span class="str">"&lt;b&gt;New content!&lt;/b&gt;"</span>;
+el.textContent = <span class="str">"Just text"</span>;
+
+<span class="cm">// Change style</span>
+el.style.color = <span class="str">"red"</span>;
+
+<span class="cm">// Add event listener</span>
+el.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Clicked!"</span>);
+});</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Form Validation (JS)</h3>
+        <div class="code-block">
+          <div class="code-label">javascript · form validation</div>
+          <pre><span class="kw">function</span> <span class="fn">validateForm</span>() {
+  <span class="kw">const</span> password = document.<span class="fn">getElementById</span>(<span class="str">"pass"</span>).value;
+  <span class="kw">if</span> (password.length < <span class="num">8</span>) {
+    <span class="fn">alert</span>(<span class="str">"Password must be at least 8 characters!"</span>);
+    <span class="kw">return false</span>;   <span class="cm">// stops form submission</span>
+  }
+  <span class="kw">return true</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSP -->
+  <div class="section-card">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(79,195,247,0.2)">☕</div>
+      <div class="section-title">JSP — JavaServer Pages (Dynamic Java Web Pages)</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 Simple idea</div>
+        <p>JSP is like PHP but for Java. You embed Java code inside HTML pages. The server runs the Java, builds the HTML, and sends the result to the user's browser.</p>
+      </div>
+
+      <div class="concept">
+        <h3>JSP Tag Types — The 4 Tags to Know</h3>
+        <div class="code-block">
+          <div class="code-label">jsp · all important tags</div>
+          <pre><span class="cm">&lt;!-- 1. DIRECTIVE — page-level settings --&gt;</span>
+<span class="tag">&lt;%@ page language="java" contentType="text/html" %&gt;</span>
+<span class="tag">&lt;%@ include file="header.jsp" %&gt;</span>
+<span class="tag">&lt;%@ taglib uri="/tld/mylib" prefix="my" %&gt;</span>
+
+<span class="cm">&lt;!-- 2. DECLARATION — declare variables/methods --&gt;</span>
+<span class="tag">&lt;%!</span>
+  <span class="kw">int</span> count = <span class="num">0</span>;
+  <span class="kw">void</span> <span class="fn">increment</span>() { count++; }
+<span class="tag">%&gt;</span>
+
+<span class="cm">&lt;!-- 3. SCRIPTLET — run Java code --&gt;</span>
+<span class="tag">&lt;%</span>
+  String name = request.<span class="fn">getParameter</span>(<span class="str">"name"</span>);
+  <span class="kw">if</span> (name != <span class="kw">null</span>) { out.<span class="fn">println</span>(<span class="str">"Hello, "</span> + name); }
+<span class="tag">%&gt;</span>
+
+<span class="cm">&lt;!-- 4. EXPRESSION — output a value --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Welcome, <span class="tag">&lt;%= name %&gt;</span>!<span class="tag">&lt;/p&gt;</span></pre>
+        </div>
+        <div class="mnemonic">
+          <div class="mn-label">🧠 Memory: D-D-S-E</div>
+          <p><strong>D</strong>irective = <code>@</code> symbol | <strong>D</strong>eclaration = <code>!</code> | <strong>S</strong>criptlet = just <code>&lt;% %&gt;</code> | <strong>E</strong>xpression = <code>=</code> sign</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>JSP Implicit Objects (auto-available, no import needed!)</h3>
+        <table class="comp-table">
+          <tr><th>Object</th><th>Type</th><th>Used For</th></tr>
+          <tr><td><code>request</code></td><td>HttpServletRequest</td><td>Get form params, headers, cookies from client</td></tr>
+          <tr><td><code>response</code></td><td>HttpServletResponse</td><td>Send redirects, set cookies</td></tr>
+          <tr><td><code>out</code></td><td>JspWriter</td><td>Write HTML to browser: <code>out.println()</code></td></tr>
+          <tr><td><code>session</code></td><td>HttpSession</td><td>Store user data across pages</td></tr>
+          <tr><td><code>application</code></td><td>ServletContext</td><td>App-wide data shared by all users</td></tr>
+          <tr><td><code>page</code></td><td>Object (this)</td><td>Reference to current JSP page</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>JSP Scope Values</h3>
+        <table class="comp-table">
+          <tr><th>Scope</th><th>Lives How Long</th><th>Visible To</th></tr>
+          <tr><td><code>page</code></td><td>Current page only</td><td>Only this JSP page</td></tr>
+          <tr><td><code>request</code></td><td>One request/response cycle</td><td>All components in same request</td></tr>
+          <tr><td><code>session</code></td><td>Until logout / session timeout</td><td>All pages for same user</td></tr>
+          <tr><td><code>application</code></td><td>Until server restarts</td><td>All users, all pages</td></tr>
+        </table>
+        <div class="mnemonic">
+          <div class="mn-label">📏 Scope size from smallest to biggest</div>
+          <p>page → request → session → application (think: me → this trip → my whole visit → everyone in the store)</p>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Cookies vs Sessions (Session Tracking)</h3>
+        <table class="comp-table">
+          <tr><th></th><th>Cookies</th><th>Sessions</th></tr>
+          <tr><td><strong>Stored on</strong></td><td>Client's browser</td><td>Server</td></tr>
+          <tr><td><strong>Size limit</strong></td><td>4KB</td><td>Much larger</td></tr>
+          <tr><td><strong>Security</strong></td><td>Less secure (visible)</td><td>More secure</td></tr>
+          <tr><td><strong>Lifetime</strong></td><td>Set by <code>setMaxAge()</code></td><td>Until timeout/logout</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>JSP Processing Flow</h3>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="step-num">1</div><div class="step-content"><strong>Client Request</strong> — Browser asks for a .jsp page</div></div>
+          <div class="flow-step"><div class="step-num">2</div><div class="step-content"><strong>Translation</strong> — Web container (Tomcat) converts JSP → Java Servlet</div></div>
+          <div class="flow-step"><div class="step-num">3</div><div class="step-content"><strong>Compilation</strong> — Java compiler compiles Servlet → bytecode</div></div>
+          <div class="flow-step"><div class="step-num">4</div><div class="step-content"><strong>Execution</strong> — JVM runs the bytecode, executes Java code</div></div>
+          <div class="flow-step"><div class="step-num">5</div><div class="step-content"><strong>Response</strong> — Generated HTML sent back to browser</div></div>
+        </div>
+        <div class="mnemonic">
+          <div class="mn-label">⚡ Note</div>
+          <p>Steps 2 & 3 only happen ONCE (first request). After that, the compiled servlet is reused — making JSP faster on subsequent requests!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- end unit 2 -->
+
+<!-- ========== UNIT 3 ========== -->
+<div id="u3" class="unit">
+
+  <div class="section-card open">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(108,99,255,0.2)">🐘</div>
+      <div class="section-title">PHP — Server-Side Scripting Powerhouse</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 What is PHP?</div>
+        <p>PHP runs on the SERVER (not in the browser). You write PHP in a .php file, the server reads it, runs the code, and sends only HTML back to the user. The user never sees PHP code!</p>
+      </div>
+
+      <div class="concept">
+        <h3>PHP Basics Syntax</h3>
+        <div class="code-block">
+          <div class="code-label">php · basics</div>
+          <pre><span class="tag">&lt;?php</span>
+<span class="cm">// Variables start with $</span>
+<span class="kw">$name</span> = <span class="str">"Alice"</span>;
+<span class="kw">$age</span> = <span class="num">25</span>;
+<span class="kw">$price</span> = <span class="num">9.99</span>;
+<span class="kw">$active</span> = <span class="kw">true</span>;
+
+<span class="cm">// Output</span>
+<span class="fn">echo</span> <span class="str">"Hello, $name! You are $age years old."</span>;
+
+<span class="cm">// Concatenation with dot (.)</span>
+<span class="fn">echo</span> <span class="str">"Hi "</span> . <span class="kw">$name</span> . <span class="str">"!"</span>;
+<span class="tag">?&gt;</span></pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">PHP Key Features</div>
+          <ul>
+            <li>Variables <strong>always start with $</strong></li>
+            <li>No type declaration needed — PHP figures it out</li>
+            <li>Use <code>echo</code> to print output</li>
+            <li>Concatenation uses <strong>dot (.)</strong>, not +</li>
+            <li>Statements end with <strong>semicolon (;)</strong></li>
+            <li>Code goes between <code>&lt;?php</code> and <code>?&gt;</code> tags</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Decision Making &amp; Loops</h3>
+        <div class="code-block">
+          <div class="code-label">php · if / switch / loops</div>
+          <pre><span class="cm">// if-elseif-else</span>
+<span class="kw">if</span> (<span class="kw">$score</span> >= <span class="num">90</span>) { <span class="fn">echo</span> <span class="str">"A"</span>; }
+<span class="kw">elseif</span> (<span class="kw">$score</span> >= <span class="num">80</span>) { <span class="fn">echo</span> <span class="str">"B"</span>; }
+<span class="kw">else</span> { <span class="fn">echo</span> <span class="str">"Fail"</span>; }
+
+<span class="cm">// While loop</span>
+<span class="kw">$x</span> = <span class="num">1</span>;
+<span class="kw">while</span> (<span class="kw">$x</span> <= <span class="num">5</span>) { <span class="fn">echo</span> <span class="kw">$x</span>; <span class="kw">$x</span>++; }
+
+<span class="cm">// For loop</span>
+<span class="kw">for</span> (<span class="kw">$i</span> = <span class="num">0</span>; <span class="kw">$i</span> < <span class="num">5</span>; <span class="kw">$i</span>++) { <span class="fn">echo</span> <span class="kw">$i</span>; }
+
+<span class="cm">// Foreach loop (for arrays)</span>
+<span class="kw">$fruits</span> = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>];
+<span class="kw">foreach</span> (<span class="kw">$fruits</span> as <span class="kw">$fruit</span>) { <span class="fn">echo</span> <span class="kw">$fruit</span>; }</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Arrays in PHP</h3>
+        <div class="code-block">
+          <div class="code-label">php · arrays</div>
+          <pre><span class="cm">// Indexed array</span>
+<span class="kw">$cars</span> = [<span class="str">"Volvo"</span>, <span class="str">"BMW"</span>, <span class="str">"Toyota"</span>];
+<span class="fn">echo</span> <span class="kw">$cars</span>[<span class="num">0</span>];   <span class="cm">// Volvo</span>
+
+<span class="cm">// Associative array (key => value)</span>
+<span class="kw">$person</span> = [<span class="str">"name"</span> => <span class="str">"John"</span>, <span class="str">"age"</span> => <span class="num">30</span>];
+<span class="fn">echo</span> <span class="kw">$person</span>[<span class="str">"name"</span>];   <span class="cm">// John</span>
+
+<span class="cm">// Useful array functions</span>
+<span class="fn">count</span>(<span class="kw">$arr</span>);           <span class="cm">// count elements</span>
+<span class="fn">array_push</span>(<span class="kw">$arr</span>, <span class="str">"x"</span>); <span class="cm">// add to end</span>
+<span class="fn">sort</span>(<span class="kw">$arr</span>);             <span class="cm">// sort ascending</span>
+<span class="fn">array_merge</span>(<span class="kw">$a</span>, <span class="kw">$b</span>);   <span class="cm">// merge two arrays</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Functions in PHP</h3>
+        <div class="code-block">
+          <div class="code-label">php · functions</div>
+          <pre><span class="cm">// Define a function</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="kw">$name</span> = <span class="str">"Guest"</span>) {  <span class="cm">// default param</span>
+  <span class="kw">return</span> <span class="str">"Hello, "</span> . <span class="kw">$name</span> . <span class="str">"!"</span>;
+}
+
+<span class="cm">// Call it</span>
+<span class="fn">echo</span> <span class="fn">greet</span>(<span class="str">"Alice"</span>);   <span class="cm">// Hello, Alice!</span>
+<span class="fn">echo</span> <span class="fn">greet</span>();          <span class="cm">// Hello, Guest!</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Form Processing in PHP</h3>
+        <div class="code-block">
+          <div class="code-label">php · handling form submission</div>
+          <pre><span class="tag">&lt;?php</span>
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+  <span class="cm">// Get data safely (prevent XSS)</span>
+  <span class="kw">$username</span> = <span class="fn">htmlspecialchars</span>(<span class="kw">$_POST</span>[<span class="str">"username"</span>]);
+
+  <span class="kw">if</span> (<span class="fn">empty</span>(<span class="kw">$username</span>)) {
+    <span class="fn">echo</span> <span class="str">"Username required!"</span>;
+  } <span class="kw">else</span> {
+    <span class="fn">echo</span> <span class="str">"Hello, $username!"</span>;
+  }
+}
+<span class="tag">?&gt;</span></pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">Security! Always sanitize inputs</div>
+          <ul>
+            <li><code>htmlspecialchars()</code> — prevents XSS (Cross-Site Scripting)</li>
+            <li><code>empty()</code> — checks if field is empty</li>
+            <li><code>$_POST</code> — gets form data from POST requests</li>
+            <li><code>$_GET</code> — gets data from URL query strings</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Cookies &amp; Sessions in PHP</h3>
+        <div class="code-block">
+          <div class="code-label">php · cookies and sessions</div>
+          <pre><span class="cm">// Set a cookie</span>
+<span class="fn">setcookie</span>(<span class="str">"username"</span>, <span class="str">"John"</span>, <span class="fn">time</span>() + <span class="num">3600</span>, <span class="str">"/"</span>);
+<span class="cm">// Read it</span>
+<span class="fn">echo</span> <span class="kw">$_COOKIE</span>[<span class="str">"username"</span>];
+
+<span class="cm">// =====================</span>
+
+<span class="cm">// Start session (MUST be first line!)</span>
+<span class="fn">session_start</span>();
+<span class="cm">// Store in session</span>
+<span class="kw">$_SESSION</span>[<span class="str">"username"</span>] = <span class="str">"John"</span>;
+<span class="cm">// Read session</span>
+<span class="fn">echo</span> <span class="kw">$_SESSION</span>[<span class="str">"username"</span>];
+<span class="cm">// Destroy session (logout)</span>
+<span class="fn">session_destroy</span>();</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>File Handling in PHP</h3>
+        <div class="code-block">
+          <div class="code-label">php · file operations</div>
+          <pre><span class="cm">// Open → Read → Close</span>
+<span class="kw">$file</span> = <span class="fn">fopen</span>(<span class="str">"data.txt"</span>, <span class="str">"r"</span>);
+<span class="kw">$content</span> = <span class="fn">fread</span>(<span class="kw">$file</span>, <span class="fn">filesize</span>(<span class="str">"data.txt"</span>));
+<span class="fn">fclose</span>(<span class="kw">$file</span>);
+
+<span class="cm">// Write to file (overwrites)</span>
+<span class="kw">$file</span> = <span class="fn">fopen</span>(<span class="str">"data.txt"</span>, <span class="str">"w"</span>);
+<span class="fn">fwrite</span>(<span class="kw">$file</span>, <span class="str">"Hello!"</span>);
+<span class="fn">fclose</span>(<span class="kw">$file</span>);
+
+<span class="cm">// Check if file exists</span>
+<span class="kw">if</span> (<span class="fn">file_exists</span>(<span class="str">"data.txt"</span>)) { <span class="fn">echo</span> <span class="str">"Found!"</span>; }
+
+<span class="cm">// Delete file</span>
+<span class="fn">unlink</span>(<span class="str">"data.txt"</span>);</pre>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">File Open Modes (important!)</div>
+          <ul>
+            <li><code>"r"</code> — Read only (file must exist)</li>
+            <li><code>"w"</code> — Write (creates/overwrites file)</li>
+            <li><code>"a"</code> — Append (add to end, create if not exists)</li>
+            <li><code>"r+"</code> — Read and write</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- end unit 3 -->
+
+<!-- ========== UNIT 4 ========== -->
+<div id="u4" class="unit">
+
+  <div class="section-card open">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon" style="background:rgba(86,208,132,0.2)">🗄️</div>
+      <div class="section-title">PHP + MySQL — Working with Databases</div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="baby-box">
+        <div class="baby-label">🍼 Simple idea</div>
+        <p>MySQL is like a giant Excel spreadsheet stored on the server. PHP connects to it, asks for data (SELECT), adds data (INSERT), changes data (UPDATE), or deletes data (DELETE). Then PHP shows the results as HTML.</p>
+      </div>
+
+      <div class="concept">
+        <h3>Connect to MySQL</h3>
+        <div class="code-block">
+          <div class="code-label">php · database connection</div>
+          <pre><span class="tag">&lt;?php</span>
+<span class="kw">$conn</span> = <span class="fn">mysqli_connect</span>(
+  <span class="str">"localhost"</span>,   <span class="cm">// server</span>
+  <span class="str">"username"</span>,    <span class="cm">// MySQL user</span>
+  <span class="str">"password"</span>,    <span class="cm">// MySQL password</span>
+  <span class="str">"mydb"</span>         <span class="cm">// database name</span>
+);
+
+<span class="kw">if</span> (!<span class="kw">$conn</span>) {
+  <span class="fn">die</span>(<span class="str">"Connection failed: "</span> . <span class="fn">mysqli_connect_error</span>());
+}
+<span class="fn">echo</span> <span class="str">"Connected!"</span>;
+<span class="tag">?&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>CRUD Operations — The 4 core operations</h3>
+        <div class="mnemonic">
+          <div class="mn-label">🧠 CRUD = Create, Read, Update, Delete</div>
+          <p>In SQL: <strong>C</strong>REATE → INSERT | <strong>R</strong>EAD → SELECT | <strong>U</strong>PDATE → UPDATE | <strong>D</strong>ELETE → DELETE</p>
+        </div>
+        <div class="code-block">
+          <div class="code-label">php+mysql · CRUD operations</div>
+          <pre><span class="cm">// CREATE TABLE</span>
+<span class="kw">$sql</span> = <span class="str">"CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL
+)"</span>;
+<span class="fn">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cm">// INSERT (Create)</span>
+<span class="kw">$sql</span> = <span class="str">"INSERT INTO users (username, email)
+         VALUES ('john', 'john@example.com')"</span>;
+<span class="fn">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cm">// SELECT (Read)</span>
+<span class="kw">$sql</span> = <span class="str">"SELECT * FROM users"</span>;
+<span class="kw">$result</span> = <span class="fn">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="fn">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+  <span class="fn">echo</span> <span class="kw">$row</span>[<span class="str">"username"</span>];
+}
+
+<span class="cm">// UPDATE</span>
+<span class="kw">$sql</span> = <span class="str">"UPDATE users SET email='new@mail.com'
+         WHERE username='john'"</span>;
+<span class="fn">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cm">// DELETE</span>
+<span class="kw">$sql</span> = <span class="str">"DELETE FROM users WHERE username='john'"</span>;
+<span class="fn">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cm">// Always close connection when done!</span>
+<span class="fn">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>Database Management Commands</h3>
+        <div class="code-block">
+          <div class="code-label">sql · database commands</div>
+          <pre><span class="cm">-- Create database</span>
+<span class="kw">CREATE DATABASE</span> myapp;
+
+<span class="cm">-- See all databases</span>
+<span class="kw">SHOW DATABASES</span>;
+
+<span class="cm">-- See all tables in current DB</span>
+<span class="kw">SHOW TABLES FROM</span> myapp;
+
+<span class="cm">-- Add a column to existing table</span>
+<span class="kw">ALTER TABLE</span> users <span class="kw">ADD COLUMN</span> age <span class="kw">INT</span>;
+
+<span class="cm">-- Drop (delete) a table</span>
+<span class="kw">DROP TABLE</span> users;
+
+<span class="cm">-- Drop (delete) a database</span>
+<span class="kw">DROP DATABASE</span> myapp;  <span class="cm">-- ⚠️ IRREVERSIBLE!</span></pre>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>State Management in Web Apps</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 The problem</div>
+          <p>HTTP is <strong>stateless</strong> — each page load is completely fresh, like calling someone who forgets who you are each time you call. We need tricks to "remember" users between requests.</p>
+        </div>
+        <table class="comp-table">
+          <tr><th>Method</th><th>Stored On</th><th>Best For</th></tr>
+          <tr><td>Cookies</td><td>Browser</td><td>Remember preferences, session ID (max 4KB)</td></tr>
+          <tr><td>Sessions</td><td>Server</td><td>Secure user data, login state</td></tr>
+          <tr><td>Query Strings</td><td>URL (?key=val)</td><td>Passing data between pages (NOT for sensitive data!)</td></tr>
+          <tr><td>URL Path Params</td><td>URL (/users/42)</td><td>RESTful APIs, clean URLs</td></tr>
+          <tr><td>Database</td><td>Server DB</td><td>Persistent data (orders, profiles)</td></tr>
+          <tr><td>Local Storage</td><td>Browser</td><td>Large client-side data, persists after close</td></tr>
+        </table>
+      </div>
+
+      <div class="concept">
+        <h3>Serialization</h3>
+        <div class="baby-box">
+          <div class="baby-label">🍼 Simple idea</div>
+          <p>Serialization = converting an object/data into a string so it can be sent over a network or saved to a file. Like turning a 3D sculpture into a 2D blueprint to mail it, then rebuilding it on the other side (deserialization).</p>
+        </div>
+        <div class="keypoints">
+          <div class="kp-label">Common Serialization Formats</div>
+          <ul>
+            <li><strong>JSON</strong> — Most popular for web APIs. Human-readable, compact.</li>
+            <li><strong>XML</strong> — Verbose but widely supported. Great for SOAP.</li>
+            <li><strong>Protocol Buffers / MessagePack</strong> — Binary. Smaller and faster but not human-readable.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept">
+        <h3>PHPMyAdmin — Visual Database Manager</h3>
+        <div class="keypoints">
+          <div class="kp-label">What PHPMyAdmin lets you do</div>
+          <ul>
+            <li>Create / delete databases and tables (no SQL needed — click buttons)</li>
+            <li>Import and export SQL files for backup</li>
+            <li>Run SQL queries directly</li>
+            <li>Manage user privileges</li>
+            <li>Accessed at: <code>http://localhost/phpmyadmin/</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- end unit 4 -->
+
+<!-- ========== QUIZ ========== -->
+<div id="quiz" class="unit">
+  <div class="quiz-section">
+    <h2>🎯 Quick Quiz — Test Yourself!</h2>
+
+    <!-- Q1 -->
+    <div class="quiz-q" id="q1">
+      <div class="q-text">1. What is the correct HTML tag for the LARGEST heading?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q1',false,'<h1> is correct! h6 is the smallest.')"><code>&lt;h6&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q1',true,'Correct! &lt;h1&gt; is the biggest/most important heading. h6 is the smallest.')"><code>&lt;h1&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false,'<h1> is correct! <heading> is not a valid HTML tag.')"><code>&lt;heading&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false,'<h1> is correct! <title> goes in <head> and shows in the browser tab.')"><code>&lt;title&gt;</code></button>
+      </div>
+      <div class="q-feedback" id="fb-q1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-q" id="q2">
+      <div class="q-text">2. In the CSS Box Model, from inside to outside, what is the correct order?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q2',true,'Correct! Content → Padding → Border → Margin (CPBM). Padding is inside the border, margin is outside.')">Content → Padding → Border → Margin</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false,'Wrong! Margin is outermost. Content is innermost.')">Margin → Border → Padding → Content</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false,'Wrong! Padding is inside the border, not the other way around.')">Content → Border → Padding → Margin</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false,'Wrong! Content is at the very center, not margin.')">Margin → Padding → Content → Border</button>
+      </div>
+      <div class="q-feedback" id="fb-q2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-q" id="q3">
+      <div class="q-text">3. Which JavaScript keyword creates a variable that CANNOT be reassigned?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q3',false,'Wrong! var is function-scoped and CAN be reassigned and even re-declared.')">var</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false,'Wrong! let allows reassignment; it just cannot be re-declared in the same scope.')">let</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',true,'Correct! const declares a constant — you cannot reassign it after initialization. Note: objects/arrays declared with const can still have their contents modified.')">const</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false,'Wrong! static is not a variable keyword in JavaScript.')">static</button>
+      </div>
+      <div class="q-feedback" id="fb-q3"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-q" id="q4">
+      <div class="q-text">4. In JSP, which tag is used to OUTPUT (print) a Java expression?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q4',false,'Wrong! &lt;%@ %&gt; is for directives like page settings.')"><code>&lt;%@ %&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false,'Wrong! &lt;%! %&gt; is for declarations (defining variables/methods).')"><code>&lt;%! %&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false,'Wrong! &lt;% %&gt; is a scriptlet — it runs Java code but doesn&apos;t directly output.')"><code>&lt;% %&gt;</code></button>
+        <button class="quiz-opt" onclick="answer(this,'q4',true,'Correct! &lt;%= %&gt; evaluates the expression and directly writes the result into HTML output. The = sign means express/output.')"><code>&lt;%= %&gt;</code></button>
+      </div>
+      <div class="q-feedback" id="fb-q4"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-q" id="q5">
+      <div class="q-text">5. Which PHP variable gets data from an HTML form sent via POST?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q5',false,'Wrong! $_GET gets data from URL query strings (e.g., page.php?name=John).')">$_GET</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',true,'Correct! $_POST gets form data submitted via the HTTP POST method. It is not visible in the URL.')">$_POST</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false,'Wrong! $_SERVER contains server info like REQUEST_METHOD, HTTP_HOST, etc.')">$_SERVER</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false,'Wrong! $_SESSION stores session data server-side, not form input.')">$_SESSION</button>
+      </div>
+      <div class="q-feedback" id="fb-q5"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quiz-q" id="q6">
+      <div class="q-text">6. What does the SQL command SELECT do?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q6',false,'Wrong! INSERT adds new rows to a table.')">Adds data to a table</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',false,'Wrong! CREATE TABLE or CREATE DATABASE creates new structures.')">Creates a new table</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',true,'Correct! SELECT retrieves/reads data from one or more tables. It is the R in CRUD (Create, Read, Update, Delete).')">Retrieves / reads data from a table</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',false,'Wrong! DELETE removes rows from a table.')">Removes data from a table</button>
+      </div>
+      <div class="q-feedback" id="fb-q6"></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quiz-q" id="q7">
+      <div class="q-text">7. What is the KEY difference between the DOM parser and SAX parser?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q7',false,'Wrong! Both DOM and SAX can handle both HTML and XML.')">DOM handles HTML, SAX handles XML only</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',true,'Correct! DOM loads the ENTIRE document into memory as a tree. SAX reads sequentially without building the whole tree, using much less memory — ideal for large files.')">DOM loads entire file into memory; SAX processes it sequentially/event-based</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',false,'Wrong! SAX is better for large files because it uses LESS memory.')">SAX uses more memory than DOM</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',false,'Wrong! SAX provides random access is false — SAX is sequential only.')">SAX provides random access; DOM is sequential</button>
+      </div>
+      <div class="q-feedback" id="fb-q7"></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quiz-q" id="q8">
+      <div class="q-text">8. In PHP, which function is used to START a session?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q8',false,'Wrong! session_begin() is not a PHP function.')">session_begin()</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',false,'Wrong! start_session() is not a PHP function.')">start_session()</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',true,'Correct! session_start() must be called at the very beginning of the PHP file, before any HTML output. It initializes the session and makes $_SESSION available.')">session_start()</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',false,'Wrong! session_init() is not a PHP function.')">session_init()</button>
+      </div>
+      <div class="q-feedback" id="fb-q8"></div>
+    </div>
+
+  </div>
+</div> <!-- end quiz -->
+
+</div> <!-- end container -->
+
+<script>
+  function showUnit(id, btn) {
+    document.querySelectorAll('.unit').forEach(u => u.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggle(header) {
+    const card = header.closest('.section-card');
+    card.classList.toggle('open');
+  }
+
+  function answer(btn, qid, correct, feedback) {
+    const q = document.getElementById(qid);
+    const fb = document.getElementById('fb-' + qid);
+    // Disable all options
+    q.querySelectorAll('.quiz-opt').forEach(o => {
+      o.disabled = true;
+      o.style.cursor = 'default';
+    });
+    if (correct) {
+      btn.classList.add('correct');
+      fb.textContent = '✅ ' + feedback;
+      fb.className = 'q-feedback show ok';
+    } else {
+      btn.classList.add('wrong');
+      fb.textContent = '❌ ' + feedback;
+      fb.className = 'q-feedback show bad';
+    }
+  }
+</script>
+
+</body>
+</html>
